@@ -1,0 +1,9 @@
+todo:
+- Connect DB
+- Create models
+- Allow for personalisation
+- Allow for saving data based on user
+- Allow for saving prefectural data
+
+Nice to have:
+- Castle mode?
