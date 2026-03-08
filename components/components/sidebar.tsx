@@ -1,25 +1,30 @@
 "use client"
 import * as React from "react"
-import { MapPin, Pencil } from "lucide-react"
+import type { Session } from "next-auth"
+import { MapPin, Pencil, LogIn, LogOut } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import {
   Sidebar as SidebarComponent,
   SidebarContent,
   SidebarHeader,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
 import { PREFECTURES } from "@/utils/prefectures"
 import { PrefectureVisit } from "@/utils/types"
+import { signOutAction } from "@/app/actions/auth"
+import Link from "next/link"
 
 type Props = React.ComponentProps<typeof SidebarComponent> & {
   visits: Record<number, PrefectureVisit>
   onToggleVisit: (id: number) => void
   onEdit: (id: number) => void
+  session: Session | null
 }
 
-export function Sidebar({ visits, onToggleVisit, onEdit, ...props }: Props) {
+export function Sidebar({ visits, onToggleVisit, onEdit, session, ...props }: Props) {
   const [search, setSearch] = React.useState("")
 
   const filtered = React.useMemo(() => {
@@ -80,7 +85,11 @@ export function Sidebar({ visits, onToggleVisit, onEdit, ...props }: Props) {
                     <span className="text-xs text-muted-foreground">{p.nam_ja}</span>
                     {visit?.visitedAt && (
                       <span className="block text-xs text-muted-foreground mt-0.5">
-                        {new Date(visit.visitedAt).toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" })}
+                        {new Date(visit.visitedAt).toLocaleDateString("en-GB", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </span>
                     )}
                   </label>
@@ -97,6 +106,34 @@ export function Sidebar({ visits, onToggleVisit, onEdit, ...props }: Props) {
           </ul>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-sidebar-border px-3 py-3">
+        {session?.user ? (
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium truncate">{session.user.email}</p>
+              <p className="text-xs text-muted-foreground">Syncing to cloud</p>
+            </div>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                title="Sign out"
+                className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="size-4" />
+              </button>
+            </form>
+          </div>
+        ) : (
+          <Link
+            href="/auth/signin"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <LogIn className="size-4 shrink-0" />
+            <span>Sign in to sync your data</span>
+          </Link>
+        )}
+      </SidebarFooter>
     </SidebarComponent>
   )
 }
