@@ -14,8 +14,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Resend({
       apiKey: process.env.RESEND_API_KEY,
-      // Use your verified Resend domain in production.
-      // For local testing, Resend's sandbox sender works if your account supports it.
       from: process.env.AUTH_EMAIL_FROM ?? "onboarding@resend.dev",
     }),
   ],
