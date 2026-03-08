@@ -17,6 +17,13 @@ export type PrefectureStyle = {
   outline?: string
 }
 
+export type PrefectureVisit = {
+  id: number
+  visited: boolean
+  visitedAt?: string  // ISO date string e.g. "2024-03-15"
+  notes?: string
+}
+
 export type JapanMapProps = {
   /** Custom styles per prefecture ID — overrides the base styleConfig for that prefecture */
   prefectureStyles?: Record<number, Partial<PrefectureStyleConfig>>
